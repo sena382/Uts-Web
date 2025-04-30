@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Realtime Counter</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      #counter {
+        font-size: 5rem;
+        font-weight: bold;
+        padding: 20px 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease;
+      }
+
+      #counter:hover {
+        transform: scale(1.05);
+      }
+
+      .status {
+        margin-top: 20px;
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Realtime Counter</h1>
+    <div id="counter">Loading...</div>
+    <div class="status" id="status">Connecting...</div>
+
+    <script>
+      const socket = new WebSocket('ws://localhost:8080');
+
+      socket.onopen = function () {
+        console.log('Connected to server');
+        document.getElementById('status').textContent = 'Connected ✅';
+      };
+
+      socket.onmessage = function (event) {
+        document.getElementById('counter').textContent = event.data.replace(
+          'Counter: ',
+          ''
+        );
+      };
+
+      socket.onclose = function () {
+        document.getElementById('status').textContent = 'Disconnected ❌';
+      };
+
+      socket.onerror = function () {
+        document.getElementById('status').textContent = 'Connection Error ⚠️';
+      };
+    </script>
+  </body>
+</html>
